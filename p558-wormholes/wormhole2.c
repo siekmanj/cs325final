@@ -1,3 +1,9 @@
+/******************************************************************************
+ * Solution for UVa problem #558 - Wormholes 
+ * Written by Alex Grejuc & Jonah Siekmann 
+ * March 4 2019 
+ * ***************************************************************************/ 
+
 #include <stdio.h>
 #include <limits.h> 
 
@@ -12,9 +18,9 @@ int main(){
 	fscanf(stdin, "%d", &num_cases);
 
 	int i;
+	/* read in all cases */ 
 	for(i = 0; i < num_cases; i++){
 		int num_stars, num_wormholes;
-		int has_negative = 0; 
 
 		fscanf(stdin, "%d %d", &num_stars, &num_wormholes);
 
@@ -22,42 +28,43 @@ int main(){
 		Wormhole wormholes[num_wormholes]; 
 
 		int j;
+		/* init vertex distances to a max val for proper relaxation */ 
 		for(j = 0; j < num_stars; j++){
 			stars[j] = INT_MAX / 2; 
 		}
 
+		/* read in and set all edges */ 
 		for(j = 0; j < num_wormholes; j++){
-			int star1, star2, traveltime;
-			fscanf(stdin, "%d %d %d", &star1, &star2, &traveltime);
-			wormholes[j].from = star1; 
-			wormholes[j].to = star2; 
-			wormholes[j].years = traveltime; 
-			has_negative = (has_negative | traveltime < 0); 
+			fscanf(stdin, "%d %d %d", &wormholes[j].from, &wormholes[j].to, &wormholes[j].years);
 		}
 		
-		int success = 0; 
-		if(has_negative){
-			if(num_wormholes) stars[wormholes[0].from] = 0; /* init source to 0 */  
+		int success = 0; /* successful if a negative cycle is found */ 
 
-			int k; 
-			for(j = 0; j < num_stars - 1; j++){
-				for(k = 0; k < num_wormholes; k++){
-					Wormhole w = wormholes[k]; 
-					if(stars[w.from] + w.years < stars[w.to]) {
-						stars[w.to] = stars[w.from] + w.years;
-					} 
-				}
-			} 
-	
+		if(num_wormholes) stars[wormholes[0].from] = 0; /* init source to 0 */  
+
+		int k;
+		
+		/* try to relax all edges in graph |V| - 1 times */  
+		for(j = 0; j < num_stars - 1; j++){
 			for(k = 0; k < num_wormholes; k++){
-				Wormhole w = wormholes[k];
-				
+				Wormhole w = wormholes[k]; 
 				if(stars[w.from] + w.years < stars[w.to]) {
-					success = 1;
-					break;  
-				}
+					stars[w.to] = stars[w.from] + w.years;
+				} 
 			}
-		}	
+		} 
+
+		/* All distances should be fully relaxed unless a negative cycle exists */
+		/* Because earth is connected to all other star systems a negative cycle
+		 * anywhere implies a possible solution */  
+		for(k = 0; k < num_wormholes; k++){
+			Wormhole w = wormholes[k];
+			
+			if(stars[w.from] + w.years < stars[w.to]) {
+				success = 1;
+				break;  
+			}
+		}
 		if(success) printf("possible\n");
 		else printf("not possible\n");
 	}
