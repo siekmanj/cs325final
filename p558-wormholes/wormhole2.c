@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <limits.h> 
+#include <time.h>
 
 typedef struct e{
 	int from; 
@@ -19,6 +20,7 @@ int main(){
 
 	int i;
 	/* read in all cases */ 
+	clock_t start = clock();
 	for(i = 0; i < num_cases; i++){
 		int num_stars, num_wormholes;
 		int min = INT_MAX; /* wupdated as minimums are found */ 
@@ -72,5 +74,6 @@ int main(){
 		if(success) printf("possible\n");
 		else printf("not possible\n");
 	}
+	printf("time elapsed: %f\n", ((float)(clock() - start)) / CLOCKS_PER_SEC);
 	return 0;
 }

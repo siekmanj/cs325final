@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 
-#define MAX_WORMS 200000
+#define MAX_WORMS 2000
 #define UNDISCOVERED 0
 #define DISCOVERED 1
 #define ROOT 2
 
-int debug = 1;
+int debug = 0;
 
 typedef struct v {
 	struct v *wormholes[MAX_WORMS];
@@ -47,7 +46,7 @@ int search(Star *s, int dist, int isrootcall){
 		}
 	}
 
-	if(s->state == DISCOVERED) s->state = UNDISCOVERED;
+	s->state = UNDISCOVERED;
 	if(debug) printf("search(): returning 0 because end of scope\n");
 	return 0;
 }
@@ -57,7 +56,6 @@ int main(){
 	fscanf(stdin, "%d", &num_cases);
 
 	int i;
-	clock_t start = clock();
 	for(i = 0; i < num_cases; i++){
 		int num_stars, num_wormholes;
 		fscanf(stdin, "%d %d", &num_stars, &num_wormholes);
@@ -103,6 +101,5 @@ int main(){
 		else
 			printf("not possible\n");
 	}
-	printf("time elapsed: %f\n", ((float)(clock() - start)) / CLOCKS_PER_SEC);
 	return 0;
 }
